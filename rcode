@@ -109,7 +109,12 @@ summed<-rowSums(matrix1[,c(1:n)])
 summed<-as.data.frame(summed)
 summed$gram<-rownames(summed)
 summed<-data.frame(summed,row.names=NULL)
+newdata<-summed[order(-summed$summed),]
+newdata<-newdata[c(2,1)]
+newdata<-data.frame(newdata,row.names=NULL)
+
 =================================================
+library(stringr)
 str<-"  How many words are in this      sentence"
 m <- str_match_all( str, "\\S+" )
 m<-data.frame(m)
