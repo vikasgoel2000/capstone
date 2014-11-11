@@ -121,4 +121,4 @@ m<-data.frame(m)
 count<-length(m[[1]])
 find<-paste(m[(count-1):count,], collapse=" ")
 
-
+grep(paste("^",find,sep=""),newdata$gram)
