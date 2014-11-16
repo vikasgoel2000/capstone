@@ -1,8 +1,60 @@
+Milestone Report for Data science specialization Capstone Project
+=======================================================
+Vikas Goyal
+Sunday, 16 Novmber 2014
+
+
+#Summary
+
+Its a capstone project given to us in collaboration with Swiftkey, Where with the help of training data set from twitter, news and blogs. We need to build a NLP algorithm which can help us in predicting the next word to be written by a user.
+
+It required processing the training data and converting it into Ngrams.
+
+##Exploratory Data Analysis
+
+We can download the data from the coursera website https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip.
+
+Data contains 3 text files ( for news, blogs and twitter)
+
+Steps we followed to process them are:-
+ 
+ 
+- Download and import the data into R
+- Cleanup the data
+- Build the collection of documents containing natural language - Corpora
+- Create Document Term Matrix
+- Produce n grams data frames (1,2 and 3)
+- Look deeper into words and terms 
+
+## Loading Data into R
+
+We will require packages like tm and RWeka to construct the n grams. 
+
+Here below we have loaded all the three txt files and checked the amount of data we have got
+
+
+```{r}
+setwd("~/Downloads/Coursera-SwiftKey/final/en_US")
 library(tm)
 library(SnowballC)
 library(RWeka)
 library("stringi")
 
+twitter<-readLines("en_US.twitter.txt")
+blogs<-readLines("en_US.blogs.txt")
+news<-readLines("en_US.news.txt")
+
+len <- c(length(twitter),length(blogs),length(news))
+barplot(len,main="Number of lines",col="dark red")
+
+len
+
+```
+
+
+#We can see that the dataset is huge and our system (1 Gb RAM) is not capable of handling all the data together, so in order to buildup a model and check the data. We have decided to take first 500 lines from each text file and then build three n-grams (1,2,3) after cleaning them. These 3 n-grams will help us in predicting the next word.  
+
+```{r}
 corpuscleaner<-function(c){
 
 corpus <- tm_map(c, tolower)
@@ -11,13 +63,12 @@ corpus <- tm_map(corpus, function(x) gsub('[])(;:#%$^*\\~{}[&+=@/"`|<>_]+', "", 
 corpus <- tm_map(corpus, removeNumbers)
 corpus <- tm_map(corpus, stripWhitespace)
 corpus = tm_map(corpus, removePunctuation)
+corpus = tm_map(corpus, removeWords, stopwords("english"))
 aslines <- as.list(corpus)
 data_table <- matrix(unlist(aslines), ncol = 1, byrow = TRUE)
 corpus = Corpus(VectorSource(data_table))
 return(corpus)
 }
-
-
 
 tokenizer<-function(corpus,n){
 BigramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = n, max = n))
@@ -37,16 +88,6 @@ return(ng)
 num=500
 #sample count of lines
 
-twitter<-readLines("en_US.twitter.txt")
-blogs<-readLines("en_US.blogs.txt")
-news<-readLines("en_US.news.txt")
-
-len <- c(length(twitter),length(blogs),length(news))
-barplot(len,main="Number of lines",col="dark red")
-
-len
-
-
 twitter<-sample(twitter,num)
 twitter<-as.data.frame(twitter,stringsAsFactors=FALSE)
 corpus = Corpus(VectorSource(twitter$twitter))
@@ -58,7 +99,14 @@ ngtw3<-tokenizer(corpus,3)
 rm(twitter)
 rm(corpus)
 
-#----------------------------------------------------------------
+str(ngtw1)
+ngtw1[1:10,]
+str(ngtw2)
+ngtw2[1:10,]
+str(ngtw3)
+ngtw3[1:10,]
+
+
 blogs<-sample(blogs,num)
 blogs<-as.data.frame(blogs,stringsAsFactors=FALSE)
 corpus = Corpus(VectorSource(blogs$blogs))
@@ -70,7 +118,13 @@ ngblg3<-tokenizer(corpus,3)
 rm(blogs)
 rm(corpus)
 
-#----------------------------------------------------------------
+str(ngblg1)
+ngblg1[1:10,]
+str(ngblg2)
+ngblg2[1:10,]
+str(ngblg3)
+ngblg3[1:10,]
+
 
 news<-sample(news,num)
 news<-as.data.frame(news,stringsAsFactors=FALSE)
@@ -82,3 +136,21 @@ ngnws2<-tokenizer(corpus,2)
 ngnws3<-tokenizer(corpus,3)
 rm(news)
 rm(corpus)
+
+str(ngnws1)
+ngnws1[1:10,]
+str(ngnws2)
+ngnws2[1:10,]
+str(ngnws3)
+ngnws3[1:10,]
+
+```
+
+
+#With the help of above code we have created 3 n-grams of each text sources and we can also check the count of each word or n-gram at the sample from each text fle. With str we can also see the unqique word count in each n gram. Count tells us its frequency in the n-gram.
+
+## Way Ahead.
+
+Moving forward to build an algorithm for next word prediction, we will first combine all the three text files and then we will create the 3 n-grams. With the help of these 3 n-grams we can easily predict the next word. for example if the person has typed its first word we can see in the 2-gram data frame and check for all the 2-grams who has got that word as its first word, now we can give user a list in the order of the frequency. Now if the user accepts the prediction or gives us 2nd word then we can look for the prediction in 3-grams data frame.
+
+Now lets say user has copy pasted a sentence which has more then 3 words then we can read from the right and check the 3 grams for the last 2 words. Thats how we can predict the next word. 
