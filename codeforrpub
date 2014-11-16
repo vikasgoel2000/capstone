@@ -1,0 +1,84 @@
+library(tm)
+library(SnowballC)
+library(RWeka)
+library("stringi")
+
+corpuscleaner<-function(c){
+
+corpus <- tm_map(c, tolower)
+corpus <- tm_map(corpus, function(x) gsub("[!?,.]+", ".", x))
+corpus <- tm_map(corpus, function(x) gsub('[])(;:#%$^*\\~{}[&+=@/"`|<>_]+', "", x))
+corpus <- tm_map(corpus, removeNumbers)
+corpus <- tm_map(corpus, stripWhitespace)
+corpus = tm_map(corpus, removePunctuation)
+aslines <- as.list(corpus)
+data_table <- matrix(unlist(aslines), ncol = 1, byrow = TRUE)
+corpus = Corpus(VectorSource(data_table))
+return(corpus)
+}
+
+
+
+tokenizer<-function(corpus,n){
+BigramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = n, max = n))
+tdm <- TermDocumentMatrix(corpus, control = list(tokenize = BigramTokenizer))
+matrix<-data.matrix(tdm)
+n<-ncol(matrix)
+count<-rowSums(matrix[,c(1:n)])
+count<-as.data.frame(count)
+count$gram<-rownames(count)
+count<-data.frame(count,row.names=NULL)
+newdata<-count[order(-count$count),]
+newdata<-newdata[c(2,1)]
+ng<-data.frame(newdata,row.names=NULL)
+return(ng)
+}
+
+num=500
+#sample count of lines
+
+twitter<-readLines("en_US.twitter.txt")
+blogs<-readLines("en_US.blogs.txt")
+news<-readLines("en_US.news.txt")
+
+len <- c(length(twitter),length(blogs),length(news))
+barplot(len,main="Number of lines",col="dark red")
+
+len
+
+
+twitter<-sample(twitter,num)
+twitter<-as.data.frame(twitter,stringsAsFactors=FALSE)
+corpus = Corpus(VectorSource(twitter$twitter))
+corpus<-corpuscleaner(corpus)
+
+ngtw1<-tokenizer(corpus,1)
+ngtw2<-tokenizer(corpus,2)
+ngtw3<-tokenizer(corpus,3)
+rm(twitter)
+rm(corpus)
+
+#----------------------------------------------------------------
+blogs<-sample(blogs,num)
+blogs<-as.data.frame(blogs,stringsAsFactors=FALSE)
+corpus = Corpus(VectorSource(blogs$blogs))
+corpus<-corpuscleaner(corpus)
+
+ngblg1<-tokenizer(corpus,1)
+ngblg2<-tokenizer(corpus,2)
+ngblg3<-tokenizer(corpus,3)
+rm(blogs)
+rm(corpus)
+
+#----------------------------------------------------------------
+
+news<-sample(news,num)
+news<-as.data.frame(news,stringsAsFactors=FALSE)
+corpus = Corpus(VectorSource(news$news))
+corpus<-corpuscleaner(corpus)
+
+ngnws1<-tokenizer(corpus,1)
+ngnws2<-tokenizer(corpus,2)
+ngnws3<-tokenizer(corpus,3)
+rm(news)
+rm(corpus)
