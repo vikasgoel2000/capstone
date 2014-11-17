@@ -1,0 +1,4 @@
+merge<-rbind(twitter,blogs,news)
+
+#for merging all three data sets
+
