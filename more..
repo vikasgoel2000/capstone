@@ -1,4 +1,30 @@
-merge<-rbind(twitter,blogs,news)
-
 #for merging all three data sets
 
+library(tm)
+library(SnowballC)
+library(RWeka)
+library("stringi")
+
+twitter<-readLines("en_US.twitter.txt")
+blogs<-readLines("en_US.blogs.txt")
+news<-readLines("en_US.news.txt")
+
+merge<-rbind(twitter,blogs,news)
+
+msample<-sample(merge,50000)
+msample<-as.data.frame(msample,stringsAsFactors=FALSE)
+corpus = Corpus(VectorSource(msample$msample))
+
+corpus <- tm_map(corpus, tolower)
+corpus <- tm_map(corpus, function(x) gsub("[!?,.]+", ".", x))
+corpus <- tm_map(corpus, function(x) gsub('[])(;:#%$^*\\~{}[&+=@/"`|<>_]+', "", x))
+corpus = tm_map(corpus, removeWords, stopwords("english"))
+corpus <- tm_map(corpus, removeNumbers)
+corpus = tm_map(corpus, removePunctuation)
+corpus <- tm_map(corpus, stripWhitespace)
+aslines <- as.list(corpus)
+data_table <- matrix(unlist(aslines), ncol = 1, byrow = TRUE)
+corpus = Corpus(VectorSource(data_table))
+
+BigramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 3, max = 3))
+tdm <- TermDocumentMatrix(corpus, control = list(tokenize = BigramTokenizer))
