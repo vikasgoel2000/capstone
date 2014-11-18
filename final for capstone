@@ -1,0 +1,34 @@
+library(tm)
+library(RWeka)
+library("NLP") 
+library("openNLP")
+
+
+twitter<-readLines("en_US.twitter.txt",warn = FALSE)
+blogs<-readLines("en_US.blogs.txt",warn = FALSE)
+news<-readLines("en_US.news.txt",warn = FALSE)
+
+merge<-c(blogs, news, twitter)
+
+msample<-sample(merge,50000)
+corpus = Corpus(VectorSource(msample))
+
+corpus <- tm_map(corpus, removeNumbers)
+corpus = tm_map(corpus, removeWords, stopwords("english"))
+corpus <- tm_map(corpus, stripWhitespace)
+corpus <- tm_map(corpus, content_transformer(tolower))
+corpus = tm_map(corpus, removePunctuation)
+
+corpusDF = data.frame(text=unlist(sapply(corpus, `[`, "content")), stringsAsFactors=FALSE)
+
+oneWordToken = NGramTokenizer(corpusDF, Weka_control(min = 1, max = 1, delimiters = " \\r\\n\\t.,;:\"()?!"))
+oneWordTokenDF = data.frame(table(oneWordToken))
+ng1 <- oneWordTokenDF[order(oneWordTokenDF$Freq, decreasing = TRUE),]
+
+twoWordToken = NGramTokenizer(corpusDF, Weka_control(min = 2, max = 2, delimiters = " \\r\\n\\t.,;:\"()?!"))
+twoWordTokenDF = data.frame(table(twoWordToken))
+ng2 <- twoWordTokenDF[order(twoWordTokenDF$Freq, decreasing = TRUE),]
+
+threeWordToken = NGramTokenizer(corpusDF, Weka_control(min = 3, max = 3, delimiters = " \\r\\n\\t.,;:\"()?!"))
+threeWordTokenDF = data.frame(table(threeWordToken))
+ng3 <- threeWordTokenDF[order(threeWordTokenDF$Freq, decreasing = TRUE),]
