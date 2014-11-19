@@ -35,5 +35,5 @@ forng2
 
 subpred<-subset(ng3,grepl(paste("^",forng3,sep=""), ng3$threeWordToken))
 
- a<-subpred$threeWordToken[1]
+a<-as.data.frame(subpred$threeWordToken[1])
  
