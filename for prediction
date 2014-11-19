@@ -1,8 +1,10 @@
 library(stringr)
 library(tm)
-str<-"  How 'many' words, are in this      sentence" 
-corpus = Corpus(VectorSource(str))
 
+str<-"  How 'many' words, are in this      sentence" 
+# user input
+
+corpus = Corpus(VectorSource(str))
 corpus <- tm_map(corpus, removeNumbers)
 corpus = tm_map(corpus, removeWords, stopwords("english"))
 corpus <- tm_map(corpus, stripWhitespace)
@@ -11,7 +13,21 @@ corpus = tm_map(corpus, removePunctuation)
 
 str= data.frame(text=unlist(sapply(corpus, `[`, "content")), stringsAsFactors=FALSE)
 
-m <- str_match_all( str, "\\S+" )
+m <- str_match_all( str$text, "\\S+" )
 m<-data.frame(m)
 count<-length(m[[1]])
-find<-paste(m[(count-1):count,], collapse=" ")
+
+if (count >=3) 
+{
+forng4<-paste(m[(count-2):count,], collapse=" ")
+print(paste("forng4",forng4))
+} else if (count>=2)
+{
+forng3<-paste(m[(count-1):count,], collapse=" ")
+forng3
+} else if (count>=1)
+{
+forng2<-paste(m[count,], collapse=" ")
+forng2
+}
+
