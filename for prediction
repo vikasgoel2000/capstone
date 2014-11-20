@@ -17,26 +17,39 @@ m <- str_match_all( str$text, "\\S+" )
 m<-data.frame(m)
 count<-length(m[[1]])
 
-if (count >=3) 
+if (count >3) 
 {
-forng3<-paste(m[(count-2):count,], collapse=" ")
-print(paste("forng4",forng4))
+forng4<-paste(m[(count-2):count,], collapse=" ")
+subpred<-subset(ng4,grepl(paste("^",forng4,sep=""), ng4$Var1))
+forpred<-subpred[which.max(subpred$Freq),][1]
+x<-strsplit(forpred[1,],' ')
+y<-as.data.frame(x,stringsAsFactors=FALSE)
+y[4,] # final prediction words
+
 } else if (count>=2)
 {
-forng2<-paste(m[(count-1):count,], collapse=" ")
-forng3
+forng3<-paste(m[(count-1):count,], collapse=" ")
+subpred<-subset(ng3,grepl(paste("^",forng4,sep=""), ng3$Var1))
+forpred<-subpred[which.max(subpred$Freq),][1]
+x<-strsplit(forpred[1,],' ')
+y<-as.data.frame(x,stringsAsFactors=FALSE)
+y[3,] # final prediction words
 } else if (count>=1)
-{
-forng1<-paste(m[count,], collapse=" ")
-forng2
+{ 
+forng2<-paste(m[count,], collapse=" ")
+subpred<-subset(ng2,grepl(paste("^",forng4,sep=""), ng2$Var1))
+forpred<-subpred[which.max(subpred$Freq),][1]
+x<-strsplit(forpred[1,],' ')
+y<-as.data.frame(x,stringsAsFactors=FALSE)
+y[2,] # final prediction words
 }
 
 # we can use subset along with grep to collect the data starting with string in a data frame... order the data frame 
 
-subpred<-subset(ng3,grepl(paste("^",forng3,sep=""), ng1$Var1))
-forpred<-subpred[which.max(subpred$Freq),][1]
+#subpred<-subset(ng3,grepl(paste("^",forng3,sep=""), ng1$Var1))
+#forpred<-subpred[which.max(subpred$Freq),][1]
 
 
-x<-strsplit(forpred[1,],' ')
-y<-as.data.frame(x,stringsAsFactors=FALSE)
-y[3,] # final prediction words
+#x<-strsplit(forpred[1,],' ')
+#y<-as.data.frame(x,stringsAsFactors=FALSE)
+#y[3,] # final prediction words
