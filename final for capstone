@@ -35,6 +35,5 @@ ng3<-as.data.frame(table(as.matrix(threeWordToken)),stringsAsFactors=FALSE)
 
 fourWordToken = NGramTokenizer(corpusDF, Weka_control(min = 4, max = 4, delimiters = " \\r\\n\\t.,;:\"()?!"))
 ng4<-as.data.frame(table(as.matrix(fourWordToken)),stringsAsFactors=FALSE)
-
+rm(corpus)
 rm(corpusDF)
-
