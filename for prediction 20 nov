@@ -1,0 +1,111 @@
+library(stringr)
+library(tm)
+
+str<-"If this isn't the cutest thing you've ever seen, then you must be" 
+# user input
+
+corpus = Corpus(VectorSource(str))
+corpus <- tm_map(corpus, content_transformer(tolower))
+corpus <- tm_map(corpus, removeNumbers)
+corpus <- tm_map(corpus, stripWhitespace)
+corpus <- tm_map(corpus, content_transformer(function(x) gsub("i'", "I'", x)));
+corpus <- tm_map(corpus, content_transformer(function(x) gsub(" i ", " I ", x)));
+corpus <- tm_map(corpus, content_transformer(function(x) gsub("^i", "I", x)));
+corpus <- tm_map(corpus, content_transformer(function(x) gsub("$i", "I", x)));
+corpus <- tm_map(corpus, content_transformer(function(x) gsub("[^[:alnum:][:space:]']", "", x)));
+corpus = tm_map(corpus, removePunctuation)
+
+str= data.frame(text=unlist(sapply(corpus, `[`, "content")), stringsAsFactors=FALSE)
+
+m <- str_match_all( str$text, "\\S+" )
+m<-data.frame(m)
+count<-length(m[[1]])
+
+rm(corpus)
+
+if (count >3) 
+{
+forng4<-paste(m[(count-2):count,], collapse=" ")
+subpred<-subset(ng4,grepl(paste("^",forng4,sep=""), ng4$Var1))
+forpred<-subpred[which.max(subpred$Freq),][1]
+x<-strsplit(forpred[1,],' ')
+y<-as.data.frame(x,stringsAsFactors=FALSE)
+pred<-y[4,] # final prediction words
+
+if (paste(pred)=="NA")
+{
+
+forng3<-paste(m[(count-1):count,], collapse=" ")
+subpred<-subset(ng3,grepl(paste("^",forng4,sep=""), ng3$Var1))
+forpred<-subpred[which.max(subpred$Freq),][1]
+x<-strsplit(forpred[1,],' ')
+y<-as.data.frame(x,stringsAsFactors=FALSE)
+pred<-y[3,] # final prediction words
+
+if (paste(pred)=="NA")
+{
+forng2<-paste(m[count,], collapse=" ")
+subpred<-subset(ng2,grepl(paste("^",forng4,sep=""), ng2$Var1))
+forpred<-subpred[which.max(subpred$Freq),][1]
+x<-strsplit(forpred[1,],' ')
+y<-as.data.frame(x,stringsAsFactors=FALSE)
+pred<-y[2,] # final prediction words
+
+if (paste(pred)=="NA")
+{
+paste("No Prediction Found")
+}
+}
+}
+}
+
+if ((count==3) || (count==2))
+{
+forng3<-paste(m[(count-1):count,], collapse=" ")
+subpred<-subset(ng3,grepl(paste("^",forng4,sep=""), ng3$Var1))
+forpred<-subpred[which.max(subpred$Freq),][1]
+x<-strsplit(forpred[1,],' ')
+y<-as.data.frame(x,stringsAsFactors=FALSE)
+pred<-y[3,] # final prediction words
+
+if (paste(pred)=="NA")
+{
+forng2<-paste(m[count,], collapse=" ")
+subpred<-subset(ng2,grepl(paste("^",forng4,sep=""), ng2$Var1))
+forpred<-subpred[which.max(subpred$Freq),][1]
+x<-strsplit(forpred[1,],' ')
+y<-as.data.frame(x,stringsAsFactors=FALSE)
+pred<-y[2,] # final prediction words
+
+if (paste(pred)=="NA")
+{
+paste("No Prediction Found")
+}
+}
+} 
+
+if (count==1)
+{ 
+forng2<-paste(m[count,], collapse=" ")
+subpred<-subset(ng2,grepl(paste("^",forng4,sep=""), ng2$Var1))
+forpred<-subpred[which.max(subpred$Freq),][1]
+x<-strsplit(forpred[1,],' ')
+y<-as.data.frame(x,stringsAsFactors=FALSE)
+pred<-y[2,] # final prediction words
+pred
+
+if (paste(pred)=="NA")
+{
+	paste("No Prediction Found")
+}
+}
+
+# we can use subset along with grep to collect the data starting with string in a data frame... order the data frame 
+
+#subpred<-subset(ng3,grepl(paste("^",forng3,sep=""), ng1$Var1))
+#forpred<-subpred[which.max(subpred$Freq),][1]
+
+
+#x<-strsplit(forpred[1,],' ')
+#y<-as.data.frame(x,stringsAsFactors=FALSE)
+#y[3,] # final prediction words
