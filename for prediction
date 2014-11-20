@@ -34,5 +34,5 @@ forng2
 # we can use subset along with grep to collect the data starting with string in a data frame... order the data frame 
 
 subpred<-subset(ng3,grepl(paste("^",forng3,sep=""), ng1$Var1))
-forpred<-subpred[which.max(subpred$Freq),]
+forpred<-subpred[which.max(subpred$Freq),][1]
 
