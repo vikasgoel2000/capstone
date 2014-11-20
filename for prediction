@@ -27,14 +27,35 @@ forpred<-subpred[which.max(subpred$Freq),][1]
 x<-strsplit(forpred[1,],' ')
 y<-as.data.frame(x,stringsAsFactors=FALSE)
 pred<-y[4,] # final prediction words
-pred
+
 if (paste(pred)=="NA")
 {
-	paste("No Prediction Found")
+
+forng3<-paste(m[(count-1):count,], collapse=" ")
+subpred<-subset(ng3,grepl(paste("^",forng4,sep=""), ng3$Var1))
+forpred<-subpred[which.max(subpred$Freq),][1]
+x<-strsplit(forpred[1,],' ')
+y<-as.data.frame(x,stringsAsFactors=FALSE)
+pred<-y[3,] # final prediction words
+
+if (paste(pred)=="NA")
+{
+forng2<-paste(m[count,], collapse=" ")
+subpred<-subset(ng2,grepl(paste("^",forng4,sep=""), ng2$Var1))
+forpred<-subpred[which.max(subpred$Freq),][1]
+x<-strsplit(forpred[1,],' ')
+y<-as.data.frame(x,stringsAsFactors=FALSE)
+pred<-y[2,] # final prediction words
+
+if (paste(pred)=="NA")
+{
+paste("No Prediction Found")
+}
+}
 }
 }
 
-if (count>=2)
+if ((count==3) || (count==2))
 {
 forng3<-paste(m[(count-1):count,], collapse=" ")
 subpred<-subset(ng3,grepl(paste("^",forng4,sep=""), ng3$Var1))
@@ -42,16 +63,24 @@ forpred<-subpred[which.max(subpred$Freq),][1]
 x<-strsplit(forpred[1,],' ')
 y<-as.data.frame(x,stringsAsFactors=FALSE)
 pred<-y[3,] # final prediction words
-pred
 
 if (paste(pred)=="NA")
 {
-	paste("No Prediction Found")
-}
+forng2<-paste(m[count,], collapse=" ")
+subpred<-subset(ng2,grepl(paste("^",forng4,sep=""), ng2$Var1))
+forpred<-subpred[which.max(subpred$Freq),][1]
+x<-strsplit(forpred[1,],' ')
+y<-as.data.frame(x,stringsAsFactors=FALSE)
+pred<-y[2,] # final prediction words
 
+if (paste(pred)=="NA")
+{
+paste("No Prediction Found")
+}
+}
 } 
 
-if (count>=1)
+if (count==1)
 { 
 forng2<-paste(m[count,], collapse=" ")
 subpred<-subset(ng2,grepl(paste("^",forng4,sep=""), ng2$Var1))
