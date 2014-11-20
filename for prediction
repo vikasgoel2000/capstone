@@ -19,15 +19,15 @@ count<-length(m[[1]])
 
 if (count >=3) 
 {
-forng4<-paste(m[(count-2):count,], collapse=" ")
+forng3<-paste(m[(count-2):count,], collapse=" ")
 print(paste("forng4",forng4))
 } else if (count>=2)
 {
-forng3<-paste(m[(count-1):count,], collapse=" ")
+forng2<-paste(m[(count-1):count,], collapse=" ")
 forng3
 } else if (count>=1)
 {
-forng2<-paste(m[count,], collapse=" ")
+forng1<-paste(m[count,], collapse=" ")
 forng2
 }
 
@@ -36,3 +36,7 @@ forng2
 subpred<-subset(ng3,grepl(paste("^",forng3,sep=""), ng1$Var1))
 forpred<-subpred[which.max(subpred$Freq),][1]
 
+
+x<-strsplit(forpred[1,],' ')
+y<-as.data.frame(x,stringsAsFactors=FALSE)
+y[3,] # final prediction words
