@@ -13,14 +13,14 @@ merge<-iconv(merge,,"ASCII")
 merge<-na.omit(merge)
 merge<-iconv(merge,,"UTF-8")
 
-msample<-sample(merge,5000)
+msample<-sample(merge,50000)
 corpus = Corpus(VectorSource(msample))
 
 corpus <- tm_map(corpus, removeNumbers)
-corpus = tm_map(corpus, removeWords, stopwords("english"))
-corpus <- tm_map(corpus, stripWhitespace)
 corpus <- tm_map(corpus, content_transformer(tolower))
 corpus = tm_map(corpus, removePunctuation)
+corpus = tm_map(corpus, removeWords, stopwords("english"))
+corpus <- tm_map(corpus, stripWhitespace)
 
 rm(twitter)
 rm(blogs)
