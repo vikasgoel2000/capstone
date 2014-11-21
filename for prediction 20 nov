@@ -5,15 +5,12 @@ str<-"If this isn't the cutest thing you've ever seen, then you must be"
 # user input
 
 corpus = Corpus(VectorSource(str))
-corpus <- tm_map(corpus, content_transformer(tolower))
 corpus <- tm_map(corpus, removeNumbers)
+corpus = tm_map(corpus, removeWords, stopwords("english"))
 corpus <- tm_map(corpus, stripWhitespace)
-corpus <- tm_map(corpus, content_transformer(function(x) gsub("i'", "I'", x)));
-corpus <- tm_map(corpus, content_transformer(function(x) gsub(" i ", " I ", x)));
-corpus <- tm_map(corpus, content_transformer(function(x) gsub("^i", "I", x)));
-corpus <- tm_map(corpus, content_transformer(function(x) gsub("$i", "I", x)));
-corpus <- tm_map(corpus, content_transformer(function(x) gsub("[^[:alnum:][:space:]']", "", x)));
+corpus <- tm_map(corpus, content_transformer(tolower))
 corpus = tm_map(corpus, removePunctuation)
+
 
 str= data.frame(text=unlist(sapply(corpus, `[`, "content")), stringsAsFactors=FALSE)
 
@@ -36,7 +33,7 @@ if (paste(pred)=="NA")
 {
 
 forng3<-paste(m[(count-1):count,], collapse=" ")
-subpred<-subset(ng3,grepl(paste("^",forng4,sep=""), ng3$Var1))
+subpred<-subset(ng3,grepl(paste("^",forng3,sep=""), ng3$Var1))
 forpred<-subpred[which.max(subpred$Freq),][1]
 x<-strsplit(forpred[1,],' ')
 y<-as.data.frame(x,stringsAsFactors=FALSE)
@@ -45,7 +42,7 @@ pred<-y[3,] # final prediction words
 if (paste(pred)=="NA")
 {
 forng2<-paste(m[count,], collapse=" ")
-subpred<-subset(ng2,grepl(paste("^",forng4,sep=""), ng2$Var1))
+subpred<-subset(ng2,grepl(paste("^",forng2,sep=""), ng2$Var1))
 forpred<-subpred[which.max(subpred$Freq),][1]
 x<-strsplit(forpred[1,],' ')
 y<-as.data.frame(x,stringsAsFactors=FALSE)
@@ -62,7 +59,7 @@ paste("No Prediction Found")
 if ((count==3) || (count==2))
 {
 forng3<-paste(m[(count-1):count,], collapse=" ")
-subpred<-subset(ng3,grepl(paste("^",forng4,sep=""), ng3$Var1))
+subpred<-subset(ng3,grepl(paste("^",forng3,sep=""), ng3$Var1))
 forpred<-subpred[which.max(subpred$Freq),][1]
 x<-strsplit(forpred[1,],' ')
 y<-as.data.frame(x,stringsAsFactors=FALSE)
@@ -71,7 +68,7 @@ pred<-y[3,] # final prediction words
 if (paste(pred)=="NA")
 {
 forng2<-paste(m[count,], collapse=" ")
-subpred<-subset(ng2,grepl(paste("^",forng4,sep=""), ng2$Var1))
+subpred<-subset(ng2,grepl(paste("^",forng2,sep=""), ng2$Var1))
 forpred<-subpred[which.max(subpred$Freq),][1]
 x<-strsplit(forpred[1,],' ')
 y<-as.data.frame(x,stringsAsFactors=FALSE)
@@ -87,7 +84,7 @@ paste("No Prediction Found")
 if (count==1)
 { 
 forng2<-paste(m[count,], collapse=" ")
-subpred<-subset(ng2,grepl(paste("^",forng4,sep=""), ng2$Var1))
+subpred<-subset(ng2,grepl(paste("^",forng2,sep=""), ng2$Var1))
 forpred<-subpred[which.max(subpred$Freq),][1]
 x<-strsplit(forpred[1,],' ')
 y<-as.data.frame(x,stringsAsFactors=FALSE)
