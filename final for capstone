@@ -3,9 +3,9 @@ library(RWeka)
 library("NLP") 
 library("openNLP")
 
-twitter<-readLines("en_US.twitter.txt",warn = FALSE)
-blogs<-readLines("en_US.blogs.txt",warn = FALSE)
-news<-readLines("en_US.news.txt",warn = FALSE)
+twitter<-readLines("en_US.twitter.txt",encoding = "en_US",warn = FALSE)
+blogs<-readLines("en_US.blogs.txt",encoding = "en_US",warn = FALSE)
+news<-readLines("en_US.news.txt",encoding = "en_US",warn = FALSE)
 
 merge<-c(blogs, news, twitter)
 
