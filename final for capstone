@@ -9,6 +9,10 @@ news<-readLines("en_US.news.txt",encoding = "en_US",warn = FALSE)
 
 merge<-c(blogs, news, twitter)
 
+merge<-iconv(merge,,"ASCII")
+merge<-na.omit(merge)
+merge<-iconv(merge,,"UTF-8")
+
 msample<-sample(merge,5000)
 corpus = Corpus(VectorSource(msample))
 
@@ -35,5 +39,11 @@ ng3<-as.data.frame(table(as.matrix(threeWordToken)),stringsAsFactors=FALSE)
 
 fourWordToken = NGramTokenizer(corpusDF, Weka_control(min = 4, max = 4, delimiters = " \\r\\n\\t.,;:\"()?!"))
 ng4<-as.data.frame(table(as.matrix(fourWordToken)),stringsAsFactors=FALSE)
+
+fiveWordToken = NGramTokenizer(corpusDF, Weka_control(min = 5, max = 5, delimiters = " \\r\\n\\t.,;:\"()?!"))
+ng5<-as.data.frame(table(as.matrix(fiveWordToken)),stringsAsFactors=FALSE)
+
+
+
 rm(corpus)
 rm(corpusDF)
