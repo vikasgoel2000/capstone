@@ -1,35 +1,52 @@
-setwd("C:/Documents and Settings/Imart/Desktop/Coursera-SwiftKey/final/en_US")
 library(tm)
 library(RWeka)
-library("NLP")
+library("NLP") 
 library("openNLP")
+library("stringi")
+
 twitter<-readLines("en_US.twitter.txt",warn = FALSE)
 blogs<-readLines("en_US.blogs.txt",warn = FALSE)
 news<-readLines("en_US.news.txt",warn = FALSE)
+
 merge<-c(blogs, news, twitter)
-msample<-sample(merge,1000)
+
+msample<-sample(merge,50000)
+
+msample<-removePunctuation(msample)
+msample<-tolower(msample)
+msample<-removeNumbers(msample)
+msample<-iconv(msample,,"ASCII")
+msample<-na.omit(msample)
+msample<-iconv(msample,,"UTF-8")
+
+corpus = Corpus(VectorSource(msample))
+corpus <- tm_map(corpus, content_transformer(tolower))
+corpus <- tm_map(corpus, removeNumbers)
+corpus <- tm_map(corpus, stripWhitespace)
+corpus = tm_map(corpus, removePunctuation)
+
+
 rm(twitter)
 rm(blogs)
 rm(news)
 rm(merge)
-msample1<-tolower(msample)
-msample1<-removePunctuation(msample)
-msample1<-tolower(msample1)
-msample1<-removeNumbers(msample1)
-msencode<-iconv(msample1,,"ASCII")
-msencode<-na.omit(msencode)
-msencode<-iconv(msencode,,"UTF-8")
-msencode[1]
-corpus = Corpus(VectorSource(msencode))
-corpus <- tm_map(corpus, removeNumbers)
-corpus = tm_map(corpus, removeWords, stopwords("english"))
-corpus <- tm_map(corpus, stripWhitespace)
-corpus <- tm_map(corpus, content_transformer(tolower))
-corpus = tm_map(corpus, removePunctuation)
-corpus
-corpus[1]
-corpus[[1]]
+
+
+twoWordToken = NGramTokenizer(corpus, Weka_control(min = 2, max = 2))
+ng2 <- as.data.frame(table(as.matrix(twoWordToken)),stringsAsFactors=FALSE)
+
 threeWordToken = NGramTokenizer(corpus, Weka_control(min = 3, max = 3))
 ng3<-as.data.frame(table(as.matrix(threeWordToken)),stringsAsFactors=FALSE)
-View(ng3)
-str(msencode)
+
+
+fourWordToken = NGramTokenizer(corpus, Weka_control(min = 4, max = 4))
+ng4<-as.data.frame(table(as.matrix(fourWordToken)),stringsAsFactors=FALSE)
+
+fiveWordToken = NGramTokenizer(corpus, Weka_control(min = 5, max = 5))
+ng5<-as.data.frame(table(as.matrix(fiveWordToken)),stringsAsFactors=FALSE)
+
+rm(corpus)
+rm(twoWordToken)
+rm(threeWordToken)
+rm(fourWordToken)
+rm(fiveWordToken)
