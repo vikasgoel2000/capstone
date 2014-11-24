@@ -1,13 +1,23 @@
 library(stringr)
 library(tm)
-str<-"then you must be"
+str<-"watch your"
 # user input
+
 corpus = Corpus(VectorSource(str))
+
+corpus <- tm_map(corpus, stripWhitespace)
 corpus <- tm_map(corpus, removeNumbers)
+corpus <- tm_map(corpus, content_transformer(tolower))
 corpus = tm_map(corpus, removeWords, stopwords("english"))
 corpus <- tm_map(corpus, stripWhitespace)
-corpus <- tm_map(corpus, content_transformer(tolower))
 corpus = tm_map(corpus, removePunctuation)
+badwords <- VectorSource(readLines("badwords.txt"))
+corpus = tm_map(corpus, removeWords, badwords)
+corpus <- tm_map(corpus, stripWhitespace)
+trim <- function (x) gsub("^\\s+|\\s+$", "", x)
+corpus <- tm_map(corpus, trim)
+corpus <- tm_map(corpus, PlainTextDocument)
+
 str= data.frame(text=unlist(sapply(corpus, `[`, "content")), stringsAsFactors=FALSE)
 m <- str_match_all( str$text, "\\S+" )
 m<-data.frame(m)
@@ -127,5 +137,3 @@ paste("No Prediction Found")
 }
 
 paste(pred,"          This is what we predict")
-
-
