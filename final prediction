@@ -1,15 +1,19 @@
 library(stringr)
 library(tm)
-str<-"love"
+load("final.rdata")
+
+predict<-function(input)
+{
+str<-input
 # user input
+
+str<-gsub("[^a-zA-Z\n\']", " ", str) # it will remove numbers and special characters and punctuations
+str<-tolower(str)
 
 corpus = Corpus(VectorSource(str))
 
 corpus <- tm_map(corpus, stripWhitespace)
-corpus <- tm_map(corpus, removeNumbers)
-corpus <- tm_map(corpus, content_transformer(tolower))
 corpus = tm_map(corpus, removePunctuation)
-corpus = tm_map(corpus, removeWords, stopwords('SMART'))
 corpus <- tm_map(corpus, stripWhitespace)
 badwords <- VectorSource(readLines("badwords.txt"))
 corpus = tm_map(corpus, removeWords, badwords)
@@ -122,7 +126,7 @@ paste("No Prediction Found")
 }
 
 
-if (count == 1)
+if (count <= 1)
 {
 forng2<-paste(m[count,], collapse=" ")
 subpred<-subset(ng2,grepl(paste("^",forng2,sep=""), ng2$Var1))
@@ -136,10 +140,13 @@ paste("No Prediction Found")
 }
 }
 
-paste(pred,"          This is what we predict")
-rm(y)
-rm(count)
-rm(forng2)
-rm(forng3)
-rm(forng4)
-rm(forng5)
+if (count == 0)
+{
+pred<-"NA" # final prediction words
+if (paste(pred)=="NA")
+{
+paste("No Prediction Found")
+}
+}
+return(pred)
+}
