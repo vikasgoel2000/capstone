@@ -2,6 +2,7 @@ library(tm)
 library(RWeka)
 library("NLP") 
 library("openNLP")
+library(stringr)
 
 twitter<-readLines("en_US.twitter.txt",encoding = "en_US",warn = FALSE)
 blogs<-readLines("en_US.blogs.txt",encoding = "en_US",warn = FALSE)
@@ -9,19 +10,20 @@ news<-readLines("en_US.news.txt",encoding = "en_US",warn = FALSE)
 
 merge<-c(blogs, news, twitter)
 
-merge<-iconv(merge,,"ASCII")
-merge<-na.omit(merge)
-merge<-iconv(merge,,"UTF-8")
+#merge<-iconv(merge,,"ASCII")
+#merge<-na.omit(merge)
+#merge<-iconv(merge,,"UTF-8")
 
-msample<-sample(merge,80000)
+msample<-sample(merge,50000)
+
+msample<-gsub("[^a-zA-Z\n\']", " ", msample) # it will remove numbers and special characters and punctuations
+msample<-tolower(msample)
+
 corpus = Corpus(VectorSource(msample))
 
 corpus <- tm_map(corpus, stripWhitespace)
-corpus <- tm_map(corpus, removeNumbers)
-corpus <- tm_map(corpus, content_transformer(tolower))
-corpus = tm_map(corpus, removeWords, stopwords('SMART'))
-corpus <- tm_map(corpus, stripWhitespace)
 corpus = tm_map(corpus, removePunctuation)
+corpus <- tm_map(corpus, stripWhitespace)
 badwords <- VectorSource(readLines("badwords.txt"))
 corpus = tm_map(corpus, removeWords, badwords)
 corpus <- tm_map(corpus, stripWhitespace)
