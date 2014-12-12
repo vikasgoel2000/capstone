@@ -1,26 +1,23 @@
 library(tm)
 library(RWeka)
-library("NLP") 
+library("NLP")
 library("openNLP")
 library(stringr)
-
 twitter<-readLines("en_US.twitter.txt",encoding = "en_US",warn = FALSE)
 blogs<-readLines("en_US.blogs.txt",encoding = "en_US",warn = FALSE)
 news<-readLines("en_US.news.txt",encoding = "en_US",warn = FALSE)
-
 merge<-c(blogs, news, twitter)
-
-#merge<-iconv(merge,,"ASCII")
-#merge<-na.omit(merge)
-#merge<-iconv(merge,,"UTF-8")
-
-msample<-sample(merge,50000)
-
+merge<-iconv(merge,,"ASCII")
+merge<-na.omit(merge)
+merge<-iconv(merge,,"UTF-8")
+msample<-sample(merge,70000)
 msample<-gsub("[^a-zA-Z\n\']", " ", msample) # it will remove numbers and special characters and punctuations
 msample<-tolower(msample)
-
+rm(twitter)
+rm(blogs)
+rm(news)
+rm(merge)
 corpus = Corpus(VectorSource(msample))
-
 corpus <- tm_map(corpus, stripWhitespace)
 corpus = tm_map(corpus, removePunctuation)
 corpus <- tm_map(corpus, stripWhitespace)
@@ -30,30 +27,19 @@ corpus <- tm_map(corpus, stripWhitespace)
 trim <- function (x) gsub("^\\s+|\\s+$", "", x)
 corpus <- tm_map(corpus, trim)
 corpus <- tm_map(corpus, PlainTextDocument)
-
-
-rm(twitter)
-rm(blogs)
-rm(news)
-rm(merge)
 rm(msample)
-
 corpusDF = data.frame(text=unlist(sapply(corpus, `[`, "content")), stringsAsFactors=FALSE)
-
 twoWordToken = NGramTokenizer(corpusDF, Weka_control(min = 2, max = 2, delimiters = " \\r\\n\\t.,;:\"()?!"))
 ng2 <- as.data.frame(table(as.matrix(twoWordToken)),stringsAsFactors=FALSE)
-
 threeWordToken = NGramTokenizer(corpusDF, Weka_control(min = 3, max = 3, delimiters = " \\r\\n\\t.,;:\"()?!"))
 ng3<-as.data.frame(table(as.matrix(threeWordToken)),stringsAsFactors=FALSE)
-
-
 fourWordToken = NGramTokenizer(corpusDF, Weka_control(min = 4, max = 4, delimiters = " \\r\\n\\t.,;:\"()?!"))
 ng4<-as.data.frame(table(as.matrix(fourWordToken)),stringsAsFactors=FALSE)
-
 fiveWordToken = NGramTokenizer(corpusDF, Weka_control(min = 5, max = 5, delimiters = " \\r\\n\\t.,;:\"()?!"))
 ng5<-as.data.frame(table(as.matrix(fiveWordToken)),stringsAsFactors=FALSE)
-
-
-
 rm(corpus)
 rm(corpusDF)
+rm(twoWordToken)
+rm(threeWordToken)
+rm(fourWordToken)
+rm(fiveWordToken)
