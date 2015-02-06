@@ -67,3 +67,40 @@ View(cluster_out)
 
 write.csv(cluster_out,"cluster_out.csv")
 
+
+
+col.names<-c("Word_Count","cluster","word_rank","Top_Words")
+c<-read.table(text="",col.names=col.names)
+
+for (i in 1:10)
+{
+data1<-subset(cluster_out,cluster==i)
+corpus1 = Corpus(VectorSource(data1$content))
+corpus1 <- tm_map(corpus1, tolower)
+corpus1 = tm_map(corpus1, removeWords, stopwords("english"))
+corpus1 = tm_map(corpus1, removePunctuation)
+corpus1 = tm_map(corpus1, removeNumbers)
+corpus1 <- tm_map(corpus1, stripWhitespace)
+corpus1 <- tm_map(corpus1, PlainTextDocument)
+dtm1 = DocumentTermMatrix(corpus1)
+
+freq <- colSums(as.matrix(dtm1))
+ord <- order(freq)
+
+
+a1<-as.matrix(freq[tail(ord,5)])
+
+a1<-as.data.frame(a1)
+a1$cluster<-i
+a1$word_rank<-c(1,2,3,4,5)
+a1$TopWords<-rownames(a1)
+rownames(a1)<-NULL
+colnames(a1)<-c("Word_Count","cluster","word_rank","Top_Words") 
+c<-rbind(c,a1)
+rm(data1)
+rm(corpus1)
+rm(a1)
+}
+c<-c[c(2,3,4,1)]
+
+write.csv(c,"TopWords.csv")
