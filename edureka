@@ -1,0 +1,69 @@
+library(tm)
+library(SnowballC)
+
+setwd("C:/Users/Vikas/Downloads/nfl-dataset-")
+data<-read.csv("NFL_SocialMedia_sample_data1.csv",header=T)
+
+
+
+log<-data[1]
+
+corpus = Corpus(VectorSource(log$content))
+
+corpus[[1]]
+
+
+corpus <- tm_map(corpus, tolower)
+corpus[[1]]
+corpus = tm_map(corpus, removeWords, stopwords("english"))
+corpus = tm_map(corpus, removePunctuation)
+corpus[[1]]
+corpus = tm_map(corpus, removeNumbers)
+corpus[[1]]
+corpus <- tm_map(corpus, stripWhitespace)
+corpus[[2]]
+
+corpus <- tm_map(corpus, PlainTextDocument)
+
+dtm = DocumentTermMatrix(corpus)
+
+dtm
+findFreqTerms(dtm, 10)
+findFreqTerms(dtm, 5)
+
+
+dtm_tfxidf <- weightTfIdf(dtm)
+
+dtm_tfxidf
+
+inspect(dtm_tfxidf[1:5, 1:100])
+
+m<-as.matrix(dtm_tfxidf)
+
+rownames(m)
+
+rownames(m)<-1:nrow(m)
+
+rownames(m)
+
+norm_eucl <- function(m) m/apply(m, MARGIN=1, FUN=function(x) sum(x^2)^.5)
+
+m_norm <- norm_eucl(m)
+
+cl <- kmeans(m_norm, 10)
+
+cl
+
+cl$cluster
+
+cl$size
+
+cluster_out<-cbind(log,cl$cluster)
+
+colnames(cluster_out)<-c("content","cluster")
+
+View(cluster_out)
+
+
+write.csv(cluster_out,"cluster_out.csv")
+
