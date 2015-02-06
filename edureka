@@ -103,4 +103,4 @@ rm(a1)
 }
 c<-c[c(2,3,4,1)]
 
-write.csv(c,"TopWords.csv")
+write.csv(c,"TopWords.csv",row.names=F)
