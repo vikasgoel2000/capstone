@@ -7,7 +7,7 @@ data<-read.csv("NFL_SocialMedia_sample_data1.csv",header=T)
 
 
 log<-data[1]
-
+set.seed(1234)
 corpus = Corpus(VectorSource(log$content))
 
 corpus[[1]]
@@ -65,7 +65,7 @@ colnames(cluster_out)<-c("content","cluster")
 View(cluster_out)
 
 
-write.csv(cluster_out,"cluster_out.csv")
+write.csv(cluster_out,"cluster_out.csv",row.names=F)
 
 
 
@@ -85,10 +85,10 @@ corpus1 <- tm_map(corpus1, PlainTextDocument)
 dtm1 = DocumentTermMatrix(corpus1)
 
 freq <- colSums(as.matrix(dtm1))
-ord <- order(freq)
+ord <- order(freq,decreasing=T)
 
 
-a1<-as.matrix(freq[tail(ord,5)])
+a1<-as.matrix(freq[head(ord,5)])
 
 a1<-as.data.frame(a1)
 a1$cluster<-i
@@ -103,4 +103,18 @@ rm(a1)
 }
 c<-c[c(2,3,4,1)]
 
+rm(log)
+rm(m)
+rm(m_norm)
+rm(cl)
+rm(col.names)
+rm(corpus)
+rm(dtm)
+rm(dtm1)
+rm(dtm_tfxidf)
+rm(freq)
+rm(i)
+rm(ord)
+
 write.csv(c,"TopWords.csv",row.names=F)
+
